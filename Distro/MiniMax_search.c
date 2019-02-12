@@ -25,6 +25,18 @@
 
 #include "MiniMax_search.h"
 
+double max(double a, double b) {
+	if(a > b)
+		return a;
+	return b;
+}
+
+double min(double a, double b) {
+	if(a < b)
+		return a;
+	return b;
+}
+
 double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size_X][size_Y], int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2], int mode, double (*utility)(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, int depth, double gr[graph_size][4]), int agentId, int depth, int maxDepth, double alpha, double beta)
 {
  /*
@@ -158,7 +170,36 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
  path[0][0]=mouse_loc[0][0];
  path[0][1]=mouse_loc[0][1];
 
- return(0.0);
+// max depth reached / is a terminal node
+ if(depth == maxDepth || checkForTerminal(mouse_loc, cat_loc, cheese_loc, cats, cheeses)) {
+	 // return utility of this node
+	 return utility(cat_loc, cheese_loc, mouse_loc, cats, cheeses, depth + 1, gr);
+ }
+
+// double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size_X][size_Y],
+// int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2], int mode,
+// double (*utility), int agentId, int depth, int maxDepth, double alpha, double beta)
+double ret;
+ // if mouse turn; id = 0
+ if(!agentId) {
+	 ret = -DBL_MAX;
+	 for(int i = 0; i < 4 && alpha < beta; i++) {
+		 // let node = the node to explore
+		 ret = max(ret, MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, mouse_loc, mode, utility,
+		 agentId == cats ? 0 : agentId + 1, depth + 1, maxDepth, alpha, beta)); // explore the 4 surrounding nodes
+		 alpha = max(alpha, ret);
+	 }
+ } else { // cat turn, id > 0
+	 ret = DBL_MAX;
+	 for(int i = 0; i < 4 && alpha < beta; i++) {
+		 // let node = the node to explore
+		 ret = min(ret, MiniMax(gr, path, cost, cat_loc, cheese_loc, cheeses, mouse_loc, mode, utility,
+		 agentId == cats ? 0 : agentId + 1, depth + 1, maxDepth, alpha, beta)); // explore the 4 surrounding nodes
+		 beta = min(beta, ret);
+	 }
+ }
+
+ return(ret);
 }
 
 double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, int depth, double gr[graph_size][4])
