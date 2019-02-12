@@ -184,18 +184,35 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 	// double (*utility), int agentId, int depth, int maxDepth, double alpha, double beta)
 	double ret;
 
+	int xW[4], yW[4];
+	int x, y;
+
 	if (!agentId)
 	{
 		ret = -DBL_MAX;
 		int new_mouse_loc[1][2];
-		memcpy(new_mouse_loc, mouse_loc, sizeof(int) * 1 * 2);
+
+		x = mouse_loc[0][0];
+		y = mouse_loc[0][1];
 	}
 	else
 	{
 		ret = DBL_MAX;
 		int new_cat_loc[10][2];
-		memcpy(new_cat_loc, cat_loc, sizeof(int) * 10 * 2);
+
+		x = cat_loc[agentId - 1][0];
+		x = cat_loc[agentId - 1][1];
 	}
+
+	xW[0] = 0;						  // top
+	xW[1] = !gr[x + (size_X * y)][1]; // right
+	xW[2] = 0;						  // bottom
+	xW[3] = !gr[x + (size_X * y)][3]; //left
+
+	yW[0] = !gr[x + (size_X * y)][0]; // top
+	yW[1] = 0;						  // right
+	yW[2] = !gr[x + (size_X * y)][2]; // bottom
+	yW[3] = 0;						  // left
 
 	for (int i = 0; i < 4 && (!mode || alpha < beta); i++)
 	{
@@ -205,6 +222,10 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		if (!agentId)
 		{
 			// let node = the node to explore
+			memcpy(new_mouse_loc, mouse_loc, sizeof(int) * 1 * 2);
+			new_mouse_loc[0][0] += xW[i];
+			new_mouse_loc[0][1] += yW[i];
+
 			ret = max(ret, MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility,
 								   agentId == cats ? 0 : agentId + 1, depth + 1, maxDepth, alpha, beta)); // explore the 4 surrounding nodes
 			alpha = max(alpha, ret);
@@ -212,6 +233,10 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		else
 		{ // cat turn, id > 0
 			// let node = the node to explore
+			memcpy(new_cat_loc, cat_loc, sizeof(int) * 10 * 2);
+			new_cat_loc[agentId - 1][0] += xW[i];
+			new_cat_loc[agentId - 1][1] += yW[i];
+
 			ret = min(ret, MiniMax(gr, path, cost, new_cat_loc, cheese_loc, cheeses, mouse_loc, mode, utility,
 								   agentId == cats ? 0 : agentId + 1, depth + 1, maxDepth, alpha, beta)); // explore the 4 surrounding nodes
 			beta = min(beta, ret);
