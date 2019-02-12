@@ -200,15 +200,15 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		y = cat_loc[agentId - 1][1];
 	}
 
-	xW[0] = 0;						 // top
-	xW[1] = gr[x + (size_X * y)][1]; // right
-	xW[2] = 0;						 // bottom
-	xW[3] = gr[x + (size_X * y)][3]; //left
+	xW[0] = 0;						  // top
+	xW[1] = gr[x + (size_X * y)][1];  // right
+	xW[2] = 0;						  // bottom
+	xW[3] = -gr[x + (size_X * y)][3]; //left
 
-	yW[0] = gr[x + (size_X * y)][0]; // top
-	yW[1] = 0;						 // right
-	yW[2] = gr[x + (size_X * y)][2]; // bottom
-	yW[3] = 0;						 // left
+	yW[0] = gr[x + (size_X * y)][0];  // top
+	yW[1] = 0;						  // right
+	yW[2] = -gr[x + (size_X * y)][2]; // bottom
+	yW[3] = 0;						  // left
 
 	for (int i = 0; i < 4 && (!mode || alpha >= beta); i++)
 	{
