@@ -183,7 +183,7 @@ double ret;
  // if mouse turn; id = 0
  if(!agentId) {
 	 ret = -DBL_MAX;
-	 for(int i = 0; i < 4 && alpha < beta; i++) {
+	 for(int i = 0; i < 4 && (!mode || alpha < beta); i++) {
 		 // let node = the node to explore
 		 ret = max(ret, MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, mouse_loc, mode, utility,
 		 agentId == cats ? 0 : agentId + 1, depth + 1, maxDepth, alpha, beta)); // explore the 4 surrounding nodes
@@ -191,7 +191,7 @@ double ret;
 	 }
  } else { // cat turn, id > 0
 	 ret = DBL_MAX;
-	 for(int i = 0; i < 4 && alpha < beta; i++) {
+	 for(int i = 0; i < 4 && (!mode || alpha < beta); i++) {
 		 // let node = the node to explore
 		 ret = min(ret, MiniMax(gr, path, cost, cat_loc, cheese_loc, cheeses, mouse_loc, mode, utility,
 		 agentId == cats ? 0 : agentId + 1, depth + 1, maxDepth, alpha, beta)); // explore the 4 surrounding nodes
