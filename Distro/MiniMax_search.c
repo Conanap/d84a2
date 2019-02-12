@@ -210,7 +210,7 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 	yW[2] = gr[x + (size_X * y)][2]; // bottom
 	yW[3] = 0;						 // left
 
-	for (int i = 0; i < 4 && (!mode || alpha < beta); i++)
+	for (int i = 0; i < 4 && (!mode || alpha >= beta); i++)
 	{
 		// need to recall how to do get adj nodes
 		// then make a move in a clockwise direction, and pass in the new stuff
@@ -229,7 +229,7 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			new_mouse_loc[0][1] += yW[i];
 
 			nextNodeVal = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility,
-								  agentId == cats ? 0 : agentId + 1, depth + 1, maxDepth, alpha, beta);
+								  agentId + 1, depth + 1, maxDepth, alpha, beta);
 			ret = max(ret, nextNodeVal); // explore the 4 surrounding nodes
 
 			if (ret == nextNodeVal)
