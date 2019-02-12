@@ -181,9 +181,6 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		return utility(cat_loc, cheese_loc, mouse_loc, cats, cheeses, depth + 1, gr);
 	}
 
-	// double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size_X][size_Y],
-	// int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2], int mode,
-	// double (*utility), int agentId, int depth, int maxDepth, double alpha, double beta)
 	double ret;
 
 	int xW[4], yW[4];
@@ -216,10 +213,15 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 	{
 		// need to recall how to do get adj nodes
 		// then make a move in a clockwise direction, and pass in the new stuff
+
+		// double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size_X][size_Y],
+		// int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2], int mode,
+		// double (*utility), int agentId, int depth, int maxDepth, double alpha, double beta)
+
 		// if mouse turn; id = 0
 		if (!agentId)
 		{
-      int new_mouse_loc[1][2];
+			int new_mouse_loc[1][2];
 			// let node = the node to explore
 			memcpy(new_mouse_loc, mouse_loc, sizeof(int) * 1 * 2);
 			new_mouse_loc[0][0] += xW[i];
@@ -231,13 +233,13 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		}
 		else
 		{ // cat turn, id > 0
-      int new_cat_loc[10][2];
+			int new_cat_loc[10][2];
 			// let node = the node to explore
 			memcpy(new_cat_loc, cat_loc, sizeof(int) * 10 * 2);
 			new_cat_loc[agentId - 1][0] += xW[i];
 			new_cat_loc[agentId - 1][1] += yW[i];
 
-			ret = min(ret, MiniMax(gr, path, minmax_cost, new_cat_loc, cheese_loc, cheeses, mouse_loc, mode, utility,
+			ret = min(ret, MiniMax(gr, path, minmax_cost, new_cat_loc, cats, cheese_loc, cheeses, mouse_loc, mode, utility,
 								   agentId == cats ? 0 : agentId + 1, depth + 1, maxDepth, alpha, beta)); // explore the 4 surrounding nodes
 			beta = min(beta, ret);
 		}
