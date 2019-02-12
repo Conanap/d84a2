@@ -204,15 +204,15 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		x = cat_loc[agentId - 1][1];
 	}
 
-	xW[0] = 0;						  // top
-	xW[1] = !gr[x + (size_X * y)][1]; // right
-	xW[2] = 0;						  // bottom
-	xW[3] = !gr[x + (size_X * y)][3]; //left
+	xW[0] = 0;						 // top
+	xW[1] = gr[x + (size_X * y)][1]; // right
+	xW[2] = 0;						 // bottom
+	xW[3] = gr[x + (size_X * y)][3]; //left
 
-	yW[0] = !gr[x + (size_X * y)][0]; // top
-	yW[1] = 0;						  // right
-	yW[2] = !gr[x + (size_X * y)][2]; // bottom
-	yW[3] = 0;						  // left
+	yW[0] = gr[x + (size_X * y)][0]; // top
+	yW[1] = 0;						 // right
+	yW[2] = gr[x + (size_X * y)][2]; // bottom
+	yW[3] = 0;						 // left
 
 	for (int i = 0; i < 4 && (!mode || alpha < beta); i++)
 	{
@@ -269,7 +269,26 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 		These arguments are as described in A1. Do have a look at your solution!
  */
 
-	return (1); // <--- Obviously, this will be replaced by your computer utilities
+	int cheeseBonus = 400;
+
+	int mouseX = mouse[0][0];
+	int mouseY = mouse[0][1];
+
+	int nodeVal = 0;
+
+	for (int i = 0; i < cheeses; i++)
+	{
+		if (mouseX == cheese_loc[i][0] && mouseY == cheese_loc[i][1])
+			nodeVal += cheeseBonus;
+	}
+
+	for (int i = 0; i < 4; i++)
+	{
+		if (!gr[mouesx + mouseY * size_X][i])
+			nodeVal -= 100;
+	}
+
+	return nodeVal;
 }
 
 int checkForTerminal(int mouse_loc[1][2], int cat_loc[10][2], int cheese_loc[10][2], int cats, int cheeses)
