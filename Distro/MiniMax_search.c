@@ -197,7 +197,7 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 	{
 		ret = bigg;
 		x = cat_loc[agentId - 1][0];
-		x = cat_loc[agentId - 1][1];
+		y = cat_loc[agentId - 1][1];
 	}
 
 	xW[0] = 0;						 // top
