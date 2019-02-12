@@ -25,21 +25,23 @@
 
 #include "MiniMax_search.h"
 
-double max(double a, double b) {
-	if(a > b)
+double max(double a, double b)
+{
+	if (a > b)
 		return a;
 	return b;
 }
 
-double min(double a, double b) {
-	if(a < b)
+double min(double a, double b)
+{
+	if (a < b)
 		return a;
 	return b;
 }
 
 double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size_X][size_Y], int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2], int mode, double (*utility)(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, int depth, double gr[graph_size][4]), int agentId, int depth, int maxDepth, double alpha, double beta)
 {
- /*
+	/*
    This function is the interface between your solution for the assignment and the driver code. The driver code
    in MiniMax_search_core_GL will call this function once per frame, and provide the following data
    
@@ -141,7 +143,7 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		That's that, now, implement your solution!
  */
 
- /********************************************************************************************************
+	/********************************************************************************************************
  * 
  * TO DO:	Implement code to perform a MiniMax search. This will involve a limited-depth BFS-like
  *              expansion. Once nodes below return values, your function will propagate minimax utilities
@@ -165,46 +167,59 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
  *
  ********************************************************************************************************/
 
- // Stub so that the code compiles/runs - This will be removed and replaced by your code!
+	// Stub so that the code compiles/runs - This will be removed and replaced by your code!
 
- path[0][0]=mouse_loc[0][0];
- path[0][1]=mouse_loc[0][1];
+	path[0][0] = mouse_loc[0][0];
+	path[0][1] = mouse_loc[0][1];
 
-// max depth reached / is a terminal node
- if(depth == maxDepth || checkForTerminal(mouse_loc, cat_loc, cheese_loc, cats, cheeses)) {
-	 // return utility of this node
-	 return utility(cat_loc, cheese_loc, mouse_loc, cats, cheeses, depth + 1, gr);
- }
+	// max depth reached / is a terminal node
+	if (depth == maxDepth || checkForTerminal(mouse_loc, cat_loc, cheese_loc, cats, cheeses))
+	{
+		// return utility of this node
+		return utility(cat_loc, cheese_loc, mouse_loc, cats, cheeses, depth + 1, gr);
+	}
 
-// double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size_X][size_Y],
-// int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2], int mode,
-// double (*utility), int agentId, int depth, int maxDepth, double alpha, double beta)
-double ret;
- // if mouse turn; id = 0
- if(!agentId) {
-	 ret = -DBL_MAX;
-	 for(int i = 0; i < 4 && (!mode || alpha < beta); i++) {
-		 // let node = the node to explore
-		 ret = max(ret, MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, mouse_loc, mode, utility,
-		 agentId == cats ? 0 : agentId + 1, depth + 1, maxDepth, alpha, beta)); // explore the 4 surrounding nodes
-		 alpha = max(alpha, ret);
-	 }
- } else { // cat turn, id > 0
-	 ret = DBL_MAX;
-	 for(int i = 0; i < 4 && (!mode || alpha < beta); i++) {
-		 // let node = the node to explore
-		 ret = min(ret, MiniMax(gr, path, cost, cat_loc, cheese_loc, cheeses, mouse_loc, mode, utility,
-		 agentId == cats ? 0 : agentId + 1, depth + 1, maxDepth, alpha, beta)); // explore the 4 surrounding nodes
-		 beta = min(beta, ret);
-	 }
- }
+	// double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size_X][size_Y],
+	// int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2], int mode,
+	// double (*utility), int agentId, int depth, int maxDepth, double alpha, double beta)
+	double ret;
+	int new_mouse_loc[1][2];
+	int new_cat_loc[10][2];
 
- return(ret);
+	memcpy(new_mouse_loc, mouse_loc, sizeof(int) * 1 * 2);
+	memcpy(new_cat_loc, cat_loc, sizeof(int) * 10 * 2);
+
+	if (!agentId)
+		ret = -DBL_MAX;
+	else
+		ret = DBL_MAX;
+
+	for (int i = 0; i < 4 && (!mode || alpha < beta); i++)
+	{
+		// need to recall how to do get adj nodes
+		// if mouse turn; id = 0
+		if (!agentId)
+		{
+			// let node = the node to explore
+			ret = max(ret, MiniMax(gr, path, minmax_cost, new_cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility,
+								   agentId == cats ? 0 : agentId + 1, depth + 1, maxDepth, alpha, beta)); // explore the 4 surrounding nodes
+			alpha = max(alpha, ret);
+		}
+		else
+		{ // cat turn, id > 0
+			// let node = the node to explore
+			ret = min(ret, MiniMax(gr, path, cost, new_cat_loc, cheese_loc, cheeses, new_mouse_loc, mode, utility,
+								   agentId == cats ? 0 : agentId + 1, depth + 1, maxDepth, alpha, beta)); // explore the 4 surrounding nodes
+			beta = min(beta, ret);
+		}
+	}
+
+	return (ret);
 }
 
 double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, int depth, double gr[graph_size][4])
 {
- /*
+	/*
 	This function computes and returns the utility value for a given game configuration.
 	As discussed in lecture, this should return a positive value for configurations that are 'good'
 	for the mouse, and a negative value for locations that are 'bad' for the mouse.
@@ -225,12 +240,12 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 		These arguments are as described in A1. Do have a look at your solution!
  */
 
- return(1);   // <--- Obviously, this will be replaced by your computer utilities
+	return (1); // <--- Obviously, this will be replaced by your computer utilities
 }
 
-int checkForTerminal(int mouse_loc[1][2],int cat_loc[10][2],int cheese_loc[10][2],int cats,int cheeses)
+int checkForTerminal(int mouse_loc[1][2], int cat_loc[10][2], int cheese_loc[10][2], int cats, int cheeses)
 {
- /* 
+	/* 
    This function determines whether a given configuration constitutes a terminal node.
    Terminal nodes are those for which:
      - A cat eats the mouse
@@ -240,15 +255,15 @@ int checkForTerminal(int mouse_loc[1][2],int cat_loc[10][2],int cheese_loc[10][2
    If the node is a terminal, the function returns 1, else it returns 0
  */
 
- // Check for cats having lunch
- for (int i=0; i<cats; i++)
-  if (mouse_loc[0][0]==cat_loc[i][0]&&mouse_loc[0][1]==cat_loc[i][1]) return(1);
+	// Check for cats having lunch
+	for (int i = 0; i < cats; i++)
+		if (mouse_loc[0][0] == cat_loc[i][0] && mouse_loc[0][1] == cat_loc[i][1])
+			return (1);
 
- // Check for mouse having lunch
- for (int i=0; i<cheeses; i++)
-  if (mouse_loc[0][0]==cheese_loc[i][0]&&mouse_loc[0][1]==cheese_loc[i][1]) return(1);
+	// Check for mouse having lunch
+	for (int i = 0; i < cheeses; i++)
+		if (mouse_loc[0][0] == cheese_loc[i][0] && mouse_loc[0][1] == cheese_loc[i][1])
+			return (1);
 
- return(0);
-
+	return (0);
 }
-
