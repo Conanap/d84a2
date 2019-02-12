@@ -25,6 +25,8 @@
 
 #include "MiniMax_search.h"
 
+#define bigg 6969420
+
 double max(double a, double b)
 {
 	if (a > b)
@@ -189,17 +191,13 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 
 	if (!agentId)
 	{
-		ret = -DBL_MAX;
-		int new_mouse_loc[1][2];
-
+		ret = -bigg;
 		x = mouse_loc[0][0];
 		y = mouse_loc[0][1];
 	}
 	else
 	{
-		ret = DBL_MAX;
-		int new_cat_loc[10][2];
-
+		ret = bigg;
 		x = cat_loc[agentId - 1][0];
 		x = cat_loc[agentId - 1][1];
 	}
@@ -221,6 +219,7 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		// if mouse turn; id = 0
 		if (!agentId)
 		{
+      int new_mouse_loc[1][2];
 			// let node = the node to explore
 			memcpy(new_mouse_loc, mouse_loc, sizeof(int) * 1 * 2);
 			new_mouse_loc[0][0] += xW[i];
@@ -232,12 +231,13 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		}
 		else
 		{ // cat turn, id > 0
+      int new_cat_loc[10][2];
 			// let node = the node to explore
 			memcpy(new_cat_loc, cat_loc, sizeof(int) * 10 * 2);
 			new_cat_loc[agentId - 1][0] += xW[i];
 			new_cat_loc[agentId - 1][1] += yW[i];
 
-			ret = min(ret, MiniMax(gr, path, cost, new_cat_loc, cheese_loc, cheeses, mouse_loc, mode, utility,
+			ret = min(ret, MiniMax(gr, path, minmax_cost, new_cat_loc, cheese_loc, cheeses, mouse_loc, mode, utility,
 								   agentId == cats ? 0 : agentId + 1, depth + 1, maxDepth, alpha, beta)); // explore the 4 surrounding nodes
 			beta = min(beta, ret);
 		}
@@ -271,8 +271,8 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 
 	int cheeseBonus = 400;
 
-	int mouseX = mouse[0][0];
-	int mouseY = mouse[0][1];
+	int mouseX = mouse_loc[0][0];
+	int mouseY = mouse_loc[0][1];
 
 	int nodeVal = 0;
 
@@ -284,7 +284,7 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 
 	for (int i = 0; i < 4; i++)
 	{
-		if (!gr[mouesx + mouseY * size_X][i])
+		if (!gr[mouseX + mouseY * size_X][i])
 			nodeVal -= 100;
 	}
 
