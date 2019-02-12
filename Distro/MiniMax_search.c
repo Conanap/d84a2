@@ -282,6 +282,9 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
  */
 
 	int cheeseBonus = 400;
+  int distanceBonus = 100;
+
+  int temp;
 
 	int mouseX = mouse_loc[0][0];
 	int mouseY = mouse_loc[0][1];
@@ -292,6 +295,10 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 	{
 		if (mouseX == cheese_loc[i][0] && mouseY == cheese_loc[i][1])
 			nodeVal += cheeseBonus;
+    else {
+      temp = (abs(mouseX - cheese_loc[i][0]) + abs(mouseY - cheese_loc[i][1]));
+      nodeVal += distanceBonus - temp;
+    }
 	}
 
 	for (int i = 0; i < 4; i++)
