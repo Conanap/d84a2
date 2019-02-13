@@ -27,6 +27,8 @@
 
 #define bigg 6969420
 
+int prev[2] = {-1, -1};
+
 double max(double a, double b)
 {
 	if (a > b)
@@ -260,6 +262,11 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		}
 	}
 
+	if (depth == 0)
+	{ // update newest path
+		prev[0] = path[0][0];
+		prev[1] = path[0][1];
+	}
 	return (ret);
 }
 
@@ -311,6 +318,11 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 	{
 		if (!gr[mouseX + mouseY * size_X][i])
 			nodeVal -= 100;
+	}
+
+	if (mouseX == prev[0] && mouseY == prev[1])
+	{
+		nodeVal -= 50;
 	}
 
 	return nodeVal;
