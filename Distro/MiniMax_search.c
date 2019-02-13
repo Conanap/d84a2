@@ -220,20 +220,17 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		// double (*utility), int agentId, int depth, int maxDepth, double alpha, double beta)
 
 		// if mouse turn; id = 0
-		if (!agentId)
+		if (!agentId && xW[i] != yW[i])
 		{
 			int new_mouse_loc[1][2];
 			// let node = the node to explore
 			memcpy(new_mouse_loc, mouse_loc, sizeof(int) * 1 * 2);
-			if (xW[i] != yW[i])
-			{
-				new_mouse_loc[0][0] += xW[i];
-				new_mouse_loc[0][1] += yW[i];
+			new_mouse_loc[0][0] += xW[i];
+			new_mouse_loc[0][1] += yW[i];
 
-				nextNodeVal = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility,
-									  agentId + 1, depth + 1, maxDepth, alpha, beta);
-				ret = max(ret, nextNodeVal); // explore the 4 surrounding nodes
-			}
+			nextNodeVal = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility,
+								  agentId + 1, depth + 1, maxDepth, alpha, beta);
+			ret = max(ret, nextNodeVal);
 
 			if (ret == nextNodeVal)
 			{ // we updated ma boi
@@ -244,24 +241,27 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 				alpha = max(alpha, ret);
 			}
 		}
-		else
-		{ // cat turn, id > 0
+		else if (xW[i] != yW[i])
+		{ // cat, id > 0
 			int new_cat_loc[10][2];
 			// let node = the node to explore
 			memcpy(new_cat_loc, cat_loc, sizeof(int) * 10 * 2);
-			if (xW[i] != yW[i])
+			new_cat_loc[agentId - 1][0] += xW[i];
+			new_cat_loc[agentId - 1][1] += yW[i];
+
+			nextNodeVal = MiniMax(gr, path, minmax_cost, new_cat_loc, cats, cheese_loc, cheeses, mouse_loc, mode, utility,
+								  agentId == cats ? 0 : agentId + 1, depth + 1, maxDepth, alpha, beta);
+			ret = min(ret, nextNodeVal);
+
+			if (ret == nextNodeVal)
 			{
-				new_cat_loc[agentId - 1][0] += xW[i];
-				new_cat_loc[agentId - 1][1] += yW[i];
-				nextNodeVal = MiniMax(gr, path, minmax_cost, new_cat_loc, cats, cheese_loc, cheeses, mouse_loc, mode, utility,
-									  agentId == cats ? 0 : agentId + 1, depth + 1, maxDepth, alpha, beta);
-				ret = min(ret, nextNodeVal); // explore the 4 surrounding nodes
 				beta = min(beta, ret);
 			}
 		}
 	}
+}
 
-	return (ret);
+return (ret);
 }
 
 double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, int depth, double gr[graph_size][4])
