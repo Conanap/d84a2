@@ -241,9 +241,8 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 				path[0][1] = new_mouse_loc[0][1];
 
 				minmax_cost[mouse_loc[0][0]][mouse_loc[0][1]] = ret;
+				alpha = max(alpha, ret);
 			}
-
-			alpha = max(alpha, ret);
 		}
 		else
 		{ // cat turn, id > 0
@@ -257,9 +256,8 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 				nextNodeVal = MiniMax(gr, path, minmax_cost, new_cat_loc, cats, cheese_loc, cheeses, mouse_loc, mode, utility,
 									  agentId == cats ? 0 : agentId + 1, depth + 1, maxDepth, alpha, beta);
 				ret = min(ret, nextNodeVal); // explore the 4 surrounding nodes
+				beta = min(beta, ret);
 			}
-
-			beta = min(beta, ret);
 		}
 	}
 
