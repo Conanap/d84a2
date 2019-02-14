@@ -28,6 +28,7 @@
 
 #define bigg 6969420
 
+bool debug = false;
 int prev[2] = {-1, -1};
 double currVal = -bigg;
 
@@ -196,14 +197,16 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		ret = -bigg;
 		x = mouse_loc[0][0];
 		y = mouse_loc[0][1];
-		fprintf(stderr, "\tMouse depth %d\n", depth);
+		if (debug)
+			fprintf(stderr, "\tMouse depth %d\n", depth);
 	}
 	else
 	{
 		ret = bigg;
 		x = cat_loc[agentId - 1][0];
 		y = cat_loc[agentId - 1][1];
-		fprintf(stderr, "\tCat depth %d\n", depth);
+		if (debug)
+			fprintf(stderr, "\tCat depth %d\n", depth);
 	}
 
 	xW[0] = 0;						  // top
@@ -237,15 +240,16 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			nextNodeVal = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility,
 								  agentId + 1, depth + 1, maxDepth, alpha, beta);
 			ret = max(ret, nextNodeVal);
+			minmax_cost[mouse_loc[0][0]][mouse_loc[0][1]] = nextNodeVal;
 
-			if (ret == nextNodeVal && nextNodeVal > currVal)
+			if (ret == nextNodeVal && nextNodeVal >= currVal)
 			{ // we updated ma boi
 				path[0][0] = new_mouse_loc[0][0];
 				path[0][1] = new_mouse_loc[0][1];
-				fprintf(stderr, "\tNew path selected: @(%d, %d), depth %d, val: %f\n", path[0][0], path[0][1], depth, ret);
+				if (debug)
+					fprintf(stderr, "\tNew path selected: @(%d, %d), depth %d, val: %f\n", path[0][0], path[0][1], depth, ret);
 
 				currVal = ret;
-				minmax_cost[mouse_loc[0][0]][mouse_loc[0][1]] = ret;
 				alpha = max(alpha, ret);
 			}
 		}
@@ -272,7 +276,8 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 	{ // update newest path
 		prev[0] = path[0][0];
 		prev[1] = path[0][1];
-		fprintf(stderr, "Final selected Path for this run: @(%d, %d)", prev[0], prev[1]);
+		if (debug)
+			fprintf(stderr, "Final selected Path for this run: @(%d, %d)", prev[0], prev[1]);
 	}
 	return (ret);
 }
@@ -332,7 +337,8 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 		nodeVal -= 50;
 	}
 
-	fprintf(stderr, "\t\t\t@(%d, %d) Node val: %d\n", mouseX, mouseY, nodeVal);
+	if (debug)
+		fprintf(stderr, "\t\t\t@(%d, %d) Node val: %d\n", mouseX, mouseY, nodeVal);
 	return nodeVal;
 }
 
