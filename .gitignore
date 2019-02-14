@@ -2,3 +2,4 @@ Distro/.vscode
 .vscode/settings.json
 MiniMax_search
 MiniMax_search.o
+res
