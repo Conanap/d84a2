@@ -194,12 +194,14 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		ret = -bigg;
 		x = mouse_loc[0][0];
 		y = mouse_loc[0][1];
+		fprintf(stderr, "Mouse depth %d\n", depth);
 	}
 	else
 	{
 		ret = bigg;
 		x = cat_loc[agentId - 1][0];
 		y = cat_loc[agentId - 1][1];
+		fprintf(stderr, "Cat depth %d\n", depth);
 	}
 
 	xW[0] = 0;						  // top
@@ -238,6 +240,7 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			{ // we updated ma boi
 				path[0][0] = new_mouse_loc[0][0];
 				path[0][1] = new_mouse_loc[0][1];
+				fprintf(stderr, "\tNew path selected: @(%d, %d)\n", path[0][0], path[0][1]);
 
 				minmax_cost[mouse_loc[0][0]][mouse_loc[0][1]] = ret;
 				alpha = max(alpha, ret);
@@ -325,6 +328,7 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 		nodeVal -= 50;
 	}
 
+	fpirntf(stderr, "\t\t@(%d, %d) Node val: %d\n", mouseX, mouseY, nodeVal);
 	return nodeVal;
 }
 
