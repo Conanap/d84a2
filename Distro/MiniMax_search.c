@@ -236,8 +236,8 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			memcpy(new_mouse_loc, mouse_loc, sizeof(int) * 1 * 2);
 			new_mouse_loc[0][0] += xW[i];
 			new_mouse_loc[0][1] += yW[i];
-			if (new_moouse_loc[0][0] == 18 && new_mouse_loc[0][1] == 13)
-				fprintf(stderr, "from (%d, %d)", mouse_loc[0][0], mouse_loc[0][1]);
+			if (new_mouse_loc[0][0] == 18 && new_mouse_loc[0][1] == 17)
+				fprintf(stderr, "from (%d, %d)\n", mouse_loc[0][0], mouse_loc[0][1]);
 
 			nextNodeVal = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility,
 								  agentId + 1, depth + 1, maxDepth, alpha, beta);
