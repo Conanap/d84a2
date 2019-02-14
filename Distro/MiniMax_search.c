@@ -244,6 +244,7 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 				path[0][1] = new_mouse_loc[0][1];
 				fprintf(stderr, "\tNew path selected: @(%d, %d), depth %d, val: %f\n", path[0][0], path[0][1], depth, ret);
 
+				currVal = ret;
 				minmax_cost[mouse_loc[0][0]][mouse_loc[0][1]] = ret;
 				alpha = max(alpha, ret);
 			}
