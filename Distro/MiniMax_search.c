@@ -315,7 +315,7 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 		else
 		{
 			temp = (abs(mouseX - cheese_loc[i][0]) + abs(mouseY - cheese_loc[i][1]));
-			temp += distanceBonus - temp;
+			nodeVal += distanceBonus - temp;
 		}
 	}
 
