@@ -306,8 +306,8 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 		These arguments are as described in A1. Do have a look at your solution!
  */
 
-	int cheeseBonus = 400;
-	int distanceBonus = 100;
+	int cheeseBonus = 1000;
+	int distanceBonus = 200;
 
 	int temp;
 	int temp2;
@@ -324,7 +324,7 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 		else
 		{
 			temp = (abs(mouseX - cheese_loc[i][0]) + abs(mouseY - cheese_loc[i][1]));
-			nodeVal += distanceBonus - temp;
+			nodeVal += distanceBonus - (3 * temp);
 		}
 	}
 
@@ -338,7 +338,7 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 
 	if (mouseX == prev[0] && mouseY == prev[1])
 	{
-		nodeVal -= 50;
+		nodeVal -= 200;
 	}
 
 	if (debug)
