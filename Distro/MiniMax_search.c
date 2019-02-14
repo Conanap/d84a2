@@ -234,8 +234,8 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			new_mouse_loc[0][0] += xW[i];
 			new_mouse_loc[0][1] += yW[i];
 
-			nextNodeVal = 1 + MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility,
-									  agentId + 1, depth + 1, maxDepth, alpha, beta);
+			nextNodeVal = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility,
+								  agentId + 1, depth + 1, maxDepth, alpha, beta);
 			ret = max(ret, nextNodeVal);
 
 			if (ret == nextNodeVal && nextNodeVal > currVal)
