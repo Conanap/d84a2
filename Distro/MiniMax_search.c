@@ -334,7 +334,7 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 			temp -= 1;
 	}
 
-	nextNodeVal -= pow(10.0, (double)temp);
+	nodeVal -= pow(10.0, (double)temp);
 
 	if (mouseX == prev[0] && mouseY == prev[1])
 	{
