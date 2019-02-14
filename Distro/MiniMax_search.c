@@ -346,7 +346,6 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 	{
 		if (!gr[mouseX + mouseY * size_X][i])
 			nodeVal -= 100;
-			;
 	}
 
 	if (mouseX == prev[0] && mouseY == prev[1])
@@ -354,7 +353,7 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 		nodeVal -= 100;
 	}
 
-	if (debug) 
+	if (debug)
 		fprintf(stderr, "\t\t\t@(%d, %d) Node val: %d\n", mouseX, mouseY, nodeVal);
 	return nodeVal;
 }
