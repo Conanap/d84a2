@@ -235,7 +235,8 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			ret = max(ret, nextNodeVal);
 			alpha = max(alpha, ret);
 
-			minmax_cost[mouse_loc[0][0]][mouse_loc[0][1]] = nextNodeVal;
+			// should be min?
+			minmax_cost[new_mouse_loc[0][0]][new_mouse_loc[0][1]] = min(minmax_cost[new_mouse_loc[0][0]][new_mouse_loc[0][1]], nextNodeVal);
 		}
 		else if (xW[i] != yW[i])
 		{ // cat, id > 0
@@ -259,6 +260,8 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		l = xW[3] ? minmax_cost[x - 1][y] : -bigg;
 		d = yW[2] ? minmax_cost[x][y + 1] : -bigg;
 		r = xW[1] ? minmax_cost[x + 1][y] : -bigg;
+
+		// fprintf(stderr, "Prev: (%d, %d)\n", prev[0], prev[1]);
 
 		int toPick = max(t, l);
 		toPick = max(toPick, d);
@@ -285,11 +288,12 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			path[0][1] = y;
 		}
 
-		prev[0] = path[0][0];
-		prev[1] = path[0][1];
+		prev[0] = mouse_loc[0][0];
+		prev[1] = mouse_loc[0][1];
 
 		if (debug)
-			fprintf(stderr, "Final selected Path for this run: @(%d, %d)", prev[0], prev[1]);
+			fprintf(stderr, "Final selected Path for this run: @(%d, %d) w/ %f cost\n", path[0][0], path[0][1], minmax_cost[path[0][0]][path[0][1]]);
+			// fprintf(stderr, "\tNew prev @(%d, %d), curr @(%d, %d)\n", prev[0], prev[1], mouse_loc[0][0], mouse_loc[0][1]);
 	}
 	return (ret);
 }
@@ -318,7 +322,7 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
  */
 
 	int cheeseBonus = 1000;
-	int distanceBonus = 400;
+	int distanceBonus = 192;
 
 	int temp;
 
@@ -342,11 +346,14 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 	{
 		if (!gr[mouseX + mouseY * size_X][i])
 			nodeVal -= 100;
+			;
 	}
 
 	if (mouseX == prev[0] && mouseY == prev[1])
 	{
-		nodeVal -= 200;
+		nodeVal -= 100;
+		if(mouseX == 17 && mouseY == 14)
+			fprintf(stderr, "\t\tdriveby @%d\n", nodeVal);
 	}
 
 	if (debug)
