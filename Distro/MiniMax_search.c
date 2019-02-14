@@ -24,6 +24,7 @@
 */
 
 #include "MiniMax_search.h"
+#include <stdio.h>
 
 #define bigg 6969420
 
