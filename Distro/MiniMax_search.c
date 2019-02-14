@@ -305,7 +305,7 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 		These arguments are as described in A1. Do have a look at your solution!
  */
 
-	int cheeseBonus = 400;
+	int cheeseBonus = 1000;
 	int distanceBonus = 100;
 
 	int temp;
