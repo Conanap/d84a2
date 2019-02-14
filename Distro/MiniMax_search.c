@@ -221,13 +221,6 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 
 	for (int i = 0; i < 4 && (!mode || alpha >= beta); i++)
 	{
-		// need to recall how to do get adj nodes
-		// then make a move in a clockwise direction, and pass in the new stuff
-
-		// double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size_X][size_Y],
-		// int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2], int mode,
-		// double (*utility), int agentId, int depth, int maxDepth, double alpha, double beta)
-
 		// if mouse turn; id = 0
 		if (!agentId && xW[i] != yW[i])
 		{
@@ -240,18 +233,9 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			nextNodeVal = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility,
 								  agentId + 1, depth + 1, maxDepth, alpha, beta);
 			ret = max(ret, nextNodeVal);
+			alpha = max(alpha, ret);
+
 			minmax_cost[mouse_loc[0][0]][mouse_loc[0][1]] = nextNodeVal;
-
-			if (ret == nextNodeVal && nextNodeVal >= currVal)
-			{ // we updated ma boi
-				path[0][0] = new_mouse_loc[0][0];
-				path[0][1] = new_mouse_loc[0][1];
-				if (true)
-					fprintf(stderr, "\tNew path selected: @(%d, %d), depth %d, val: %f, from (%d, %d)\n", path[0][0], path[0][1], depth, ret, mouse_loc[0][0], mouse_loc[0][1]);
-
-				currVal = ret;
-				alpha = max(alpha, ret);
-			}
 		}
 		else if (xW[i] != yW[i])
 		{ // cat, id > 0
@@ -264,18 +248,46 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			nextNodeVal = MiniMax(gr, path, minmax_cost, new_cat_loc, cats, cheese_loc, cheeses, mouse_loc, mode, utility,
 								  agentId == cats ? 0 : agentId + 1, depth + 1, maxDepth, alpha, beta);
 			ret = min(ret, nextNodeVal);
-
-			if (ret == nextNodeVal)
-			{
-				beta = min(beta, ret);
-			}
+			beta = min(beta, ret);
 		}
 	}
 
 	if (depth == 0)
-	{ // update newest path
+	{ // get largest path from the 4 around:
+		int t, l, d, r;
+		t = yW[0] ? minmax_cost[x][y - 1] : -bigg;
+		l = xW[3] ? minmax_cost[x - 1][y] : -bigg;
+		d = yW[2] ? minmax_cost[x][y + 1] : -bigg;
+		r = xW[1] ? minmax_cost[x + 1][y] : -bigg;
+
+		int toPick = max(t, l);
+		toPick = max(toPick, d);
+		toPick = max(toPick, r);
+
+		if (toPick == t)
+		{
+			path[0][0] = x;
+			path[0][1] = y - 1;
+		}
+		else if (toPick == l)
+		{
+			path[0][0] = x - 1;
+			path[0][1] = y;
+		}
+		else if (toPick == d)
+		{
+			path[0][0] = x;
+			path[0][1] = y + 1;
+		}
+		else
+		{ // r
+			path[0][0] = x + 1;
+			path[0][1] = y;
+		}
+
 		prev[0] = path[0][0];
 		prev[1] = path[0][1];
+
 		if (debug)
 			fprintf(stderr, "Final selected Path for this run: @(%d, %d)", prev[0], prev[1]);
 	}
