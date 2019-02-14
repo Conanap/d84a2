@@ -25,7 +25,6 @@
 
 #include "MiniMax_search.h"
 #include <stdio.h>
-#include <math.h>
 
 #define bigg 6969420
 
@@ -306,11 +305,10 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 		These arguments are as described in A1. Do have a look at your solution!
  */
 
-	int cheeseBonus = 1000;
-	int distanceBonus = 200;
+	int cheeseBonus = 400;
+	int distanceBonus = 100;
 
 	int temp;
-	int temp2;
 
 	int mouseX = mouse_loc[0][0];
 	int mouseY = mouse_loc[0][1];
@@ -324,21 +322,19 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 		else
 		{
 			temp = (abs(mouseX - cheese_loc[i][0]) + abs(mouseY - cheese_loc[i][1]));
-			nodeVal += distanceBonus - (3 * temp);
+			nodeVal += distanceBonus - temp;
 		}
 	}
 
 	for (int i = 0; i < 4; i++)
 	{
 		if (!gr[mouseX + mouseY * size_X][i])
-			temp -= 1;
+			nodeVal -= 100;
 	}
-
-	nodeVal -= pow(10.0, (double)temp);
 
 	if (mouseX == prev[0] && mouseY == prev[1])
 	{
-		nodeVal -= 200;
+		nodeVal -= 50;
 	}
 
 	if (debug)
