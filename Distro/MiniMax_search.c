@@ -251,7 +251,6 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		}
 	}
 
-	// should be min?
 	minmax_cost[mouse_loc[0][0]][mouse_loc[0][1]] = nextNodeVal;
 	if (depth == 0)
 	{ // get largest path from the 4 around:
@@ -342,10 +341,19 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 		}
 	}
 
+	temp = 0;
 	for (int i = 0; i < 4; i++)
 	{
 		if (!gr[mouseX + mouseY * size_X][i])
-			nodeVal -= 100;
+			temp++;
+	}
+
+	if(temp == 1) {
+		nodeVal -=20;
+	} else if(temp == 2) {
+		nodeVal -=100;
+	} else if(temp == 3) {
+		nodeVal -=800;
 	}
 
 	if (mouseX == prev[0] && mouseY == prev[1])
