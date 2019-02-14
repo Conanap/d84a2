@@ -29,6 +29,7 @@
 #define bigg 6969420
 
 int prev[2] = {-1, -1};
+double currVal = -bigg;
 
 double max(double a, double b)
 {
@@ -237,11 +238,11 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 								  agentId + 1, depth + 1, maxDepth, alpha, beta);
 			ret = max(ret, nextNodeVal);
 
-			if (ret == nextNodeVal)
+			if (ret == nextNodeVal && nextNodeVal > currVal)
 			{ // we updated ma boi
 				path[0][0] = new_mouse_loc[0][0];
 				path[0][1] = new_mouse_loc[0][1];
-				fprintf(stderr, "\t\ttNew path selected: @(%d, %d)\n", path[0][0], path[0][1]);
+				fprintf(stderr, "\tNew path selected: @(%d, %d)\n", path[0][0], path[0][1]);
 
 				minmax_cost[mouse_loc[0][0]][mouse_loc[0][1]] = ret;
 				alpha = max(alpha, ret);
