@@ -32,7 +32,7 @@ bool debug = false;
 int prev[2] = {-1, -1};
 double currVal = -bigg;
 bool initd = false;
-int dists[graph_size][graph_size] = {bigg};
+int dists[graph_size][graph_size];
 
 double max(double a, double b)
 {
@@ -55,6 +55,14 @@ bool isConnected(int a, int b, double gr[graph_size][4])
 
 void fwInit(double gr[graph_size][4])
 {
+	for (int x = 0; x < graph_size; x++)
+	{
+		for (int y = 0; y < graph_size; y++)
+		{
+			dists[x][y] = bigg;
+		}
+	}
+
 	// init connected
 	for (int i = 0; i < graph_size; i++)
 	{
@@ -78,7 +86,9 @@ void fwInit(double gr[graph_size][4])
 	}
 
 	for (int k = 0; k < graph_size; k++)
+	{
 		for (int i = 0; i < graph_size; i++)
+		{
 			for (int j = 0; j < graph_size; j++)
 			{
 				if (dists[i][j] > dists[i][k] + dists[k][j])
@@ -86,6 +96,8 @@ void fwInit(double gr[graph_size][4])
 					dists[i][j] = dists[i][k] + dists[k][j];
 				}
 			}
+		}
+	}
 }
 
 double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size_X][size_Y], int cat_loc[10][2], int cats, int cheese_loc[10][2], int cheeses, int mouse_loc[1][2], int mode, double (*utility)(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, int depth, double gr[graph_size][4]), int agentId, int depth, int maxDepth, double alpha, double beta)
@@ -221,6 +233,14 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 	{
 		fwInit(gr);
 		initd = true;
+		// for (int x = 0; x < graph_size; x++)
+		// {
+		// 	for (int y = 0; y < graph_size; y++)
+		// 	{
+		// 		fprintf(stderr, "%d, ", dists[x][y]);
+		// 	}
+		// 	fprintf(stderr, "\n");
+		// }
 	}
 
 	path[0][0] = mouse_loc[0][0];
