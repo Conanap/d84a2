@@ -301,6 +301,34 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 	return (ret);
 }
 
+int manDist(int x1, int y1, int x2, int y2) {
+	return (abs(x1 -x2) + abs(y1-y2));
+}
+
+int closestCheese(int mouse_loc[1][2], int cheese_loc[10][2], int cheeses) {
+	int closest = -1;
+	int dist = bigg;
+	int temp;
+
+	for(int i = 0; i < cheeses; i++) {
+		temp = manDist(mouse_loc[0][0], mouse_loc[0][1], cheese_loc[i][0], cheese_loc[i][1]);
+		if(temp < dist) {
+			closest = i;
+			dist = temp;
+		}
+	}
+
+	return closest;
+}
+
+bool isOnCheese(int mouse_loc[1][2], int cheese_loc[10][2], int cheeses) {
+	for(int i = 0; i < cheeses; i++) {
+		if(mouse_loc[0][0] == cheese_loc[i][0] && mouse_loc[0][1] == cheese_loc[i][1])
+			return true;
+	}
+	return false;
+}
+
 double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, int depth, double gr[graph_size][4])
 {
 	/*
@@ -335,6 +363,17 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 
 	int nodeVal = 0;
 
+	int closestCat = closestCheese(mouse_loc, cat_loc, cats);
+	if(manDist(mouse_loc[0][0], mouse_loc[0][1], cat_loc[closestCat][0], cat_loc[closestCat][1]) <= 10) {
+		if(isOnCheese(mouse_loc, cheese_loc, cheeses)) {
+			return 1;
+		}
+
+		int cCheese = closestCheese(mouse_loc, cheese_loc, cheeses);
+		return manDist(mouse_loc[0][0], mouse_loc[0][1], cheese_loc[cCheese][0], cheese_loc[cCheese][1]);
+		
+	}
+
 	for (int i = 0; i < cheeses; i++)
 	{
 		if (mouseX == cheese_loc[i][0] && mouseY == cheese_loc[i][1]) {
@@ -342,7 +381,7 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 		}
 		else
 		{
-			temp = (abs(mouseX - cheese_loc[i][0]) + abs(mouseY - cheese_loc[i][1]));
+			temp = manDist(mouseX, mouseY,cheese_loc[i][0], cheese_loc[i][1]);
 			nodeVal += distanceBonus - (3 * temp);
 		}
 	}
