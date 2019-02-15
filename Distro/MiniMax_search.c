@@ -361,9 +361,9 @@ void minHeapify(int heap[graph_size], int i, int size, int dist[graph_size], int
 	int min = i;
 	int temp;
 
-	if (l < size && heap[l] > heap[i])
+	if (l <= size && heap[l] > heap[i])
 		min = l;
-	if (r < size && heap[r] > heap[i])
+	if (r <= size && heap[r] > heap[i])
 		min = r;
 
 	if (min != i)
@@ -401,7 +401,7 @@ int ifOnShortest(int mouse_loc[1][2], int cheese_loc[10][2], int cheeses)
 	int heap[size_X * size_Y];
 	int path[size_X * size_Y];
 	int heapIndex[size_X * size_Y];
-	int size = size_X * size_Y;
+	int size = size_X * size_Y - 1;
 	int x = mouse_loc[0][0];
 	int y = mouse_loc[0][1];
 	int next, tdist;
@@ -413,10 +413,11 @@ int ifOnShortest(int mouse_loc[1][2], int cheese_loc[10][2], int cheeses)
 	}
 	heap[0] = x + size_X * y;
 	heapIndex[0] = x + size_X * y;
-	heap[x + y * size_X] = 0;
-	heapIndex[x * y * size_X] = 0;
+	heap[size] = 0;
+	heapIndex[size] = 0;
 
-	dist[x + y * size_X] = 0;
+	dist[size] = 0;
+	size--;
 
 	next = heap[0];
 	while (!isOnMultCheese(next, cheese_loc, cheeses))
@@ -431,13 +432,13 @@ int ifOnShortest(int mouse_loc[1][2], int cheese_loc[10][2], int cheeses)
 		// explore surroundings
 		tdist = 1 + dist[next];
 
-		if (tdist < dist[next + 1])
+		if (next + 1 <= size && tdist < dist[next + 1])
 		{
 			dist[next + 1] = tdist;
 			prev[next + 1] = next;
 			bubbleUp(heap, heapIndex[next + 1], dist, heapIndex);
 		}
-		if (tdist < dist[next + size_X])
+		if (next + size_X <= size && tdist < dist[next + size_X])
 		{
 			dist[next + size_X] = tdist;
 			prev[next + size_X] = next;
