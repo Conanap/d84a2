@@ -364,7 +364,7 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 	int nodeVal = 0;
 
 	int closestCat = closestCheese(mouse_loc, cat_loc, cats);
-	if(manDist(mouse_loc[0][0], mouse_loc[0][1], cat_loc[closestCat][0], cat_loc[closestCat][1]) <= 10) {
+	if(manDist(mouse_loc[0][0], mouse_loc[0][1], cat_loc[closestCat][0], cat_loc[closestCat][1]) > 10) {
 		if(isOnCheese(mouse_loc, cheese_loc, cheeses)) {
 			return 1;
 		}
