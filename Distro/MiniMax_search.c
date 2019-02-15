@@ -354,11 +354,7 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 			temp++;
 	}
 
-	if(temp == 1) {
-		nodeVal -=20;
-	} else if(temp == 2) {
-		nodeVal -=100;
-	} else if(temp == 3) {
+	if(temp == 3) {
 		nodeVal -=800;
 	}
 
