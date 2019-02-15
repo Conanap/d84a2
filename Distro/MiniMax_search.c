@@ -356,6 +356,8 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 	int distanceBonus = 192;
 	int depthBonus = 500;
 
+	int walls;
+
 	int temp;
 
 	int mouseX = mouse_loc[0][0];
@@ -363,14 +365,24 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 
 	int nodeVal = 0;
 
+	walls = 0;
+	for (int i = 0; i < 4; i++)
+	{
+		if (!gr[mouseX + mouseY * size_X][i])
+			walls++;
+	}
+
 	int closestCat = closestCheese(mouse_loc, cat_loc, cats);
 	if(manDist(mouse_loc[0][0], mouse_loc[0][1], cat_loc[closestCat][0], cat_loc[closestCat][1]) > 10) {
+		if(walls == 3)
+			return -800;
+
 		if(isOnCheese(mouse_loc, cheese_loc, cheeses)) {
-			return 1;
+			return 1000 - depth;
 		}
 
 		int cCheese = closestCheese(mouse_loc, cheese_loc, cheeses);
-		return manDist(mouse_loc[0][0], mouse_loc[0][1], cheese_loc[cCheese][0], cheese_loc[cCheese][1]);
+		return manDist(mouse_loc[0][0], mouse_loc[0][1], cheese_loc[cCheese][0], cheese_loc[cCheese][1]) - depth;
 		
 	}
 
@@ -386,15 +398,8 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 		}
 	}
 
-	temp = 0;
-	for (int i = 0; i < 4; i++)
-	{
-		if (!gr[mouseX + mouseY * size_X][i])
-			temp++;
-	}
-
-	if(temp == 3) {
-		nodeVal -=800;
+	if(walls == 3) {
+		nodeVal -= 800;
 	}
 
 	if (mouseX == prev[0] && mouseY == prev[1])
