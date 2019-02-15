@@ -221,7 +221,6 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 	yW[1] = 0;						  // right
 	yW[2] = gr[x + (size_X * y)][2];  // bottom
 	yW[3] = 0;						  // left
-
 	for (int i = 0; i < 4 && (!mode || alpha >= beta); i++)
 	{
 		// if mouse turn; id = 0
@@ -232,12 +231,11 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			memcpy(new_mouse_loc, mouse_loc, sizeof(int) * 1 * 2);
 			new_mouse_loc[0][0] += xW[i];
 			new_mouse_loc[0][1] += yW[i];
-
+			
 			nextNodeVal = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility,
 								  agentId + 1, depth + 1, maxDepth, alpha, beta);
 			ret = max(ret, nextNodeVal);
 			alpha = max(alpha, ret);
-
 		}
 		else if (xW[i] != yW[i])
 		{ // cat, id > 0
@@ -254,16 +252,20 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		}
 	}
 
-	minmax_cost[mouse_loc[0][0]][mouse_loc[0][1]] = nextNodeVal;
+	if(!agentId) {
+		if(minmax_cost[x][y] == 0.0)
+			minmax_cost[x][y] = ret;
+		else
+			minmax_cost[x][y] = min(ret, minmax_cost[x][y]);
+	}
+
 	if (depth == 0)
 	{ // get largest path from the 4 around:
-		int t, l, d, r;
-		t = yW[0] ? minmax_cost[x][y - 1] : -bigg;
-		l = xW[3] ? minmax_cost[x - 1][y] : -bigg;
-		d = yW[2] ? minmax_cost[x][y + 1] : -bigg;
-		r = xW[1] ? minmax_cost[x + 1][y] : -bigg;
-
-		// fprintf(stderr, "Prev: (%d, %d)\n", prev[0], prev[1]);
+		double t, l, d, r;
+		t = yW[0] ? minmax_cost[x][y - 1] : (double)-bigg;
+		l = xW[3] ? minmax_cost[x - 1][y] : (double)-bigg;
+		d = yW[2] ? minmax_cost[x][y + 1] : (double)-bigg;
+		r = xW[1] ? minmax_cost[x + 1][y] : (double)-bigg;
 
 		int toPick = max(t, l);
 		toPick = max(toPick, d);
@@ -295,7 +297,6 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 
 		if (debug)
 			fprintf(stderr, "Final selected Path for this run: @(%d, %d) w/ %f cost\n", path[0][0], path[0][1], minmax_cost[path[0][0]][path[0][1]]);
-			// fprintf(stderr, "\tNew prev @(%d, %d), curr @(%d, %d)\n", prev[0], prev[1], mouse_loc[0][0], mouse_loc[0][1]);
 	}
 	return (ret);
 }
@@ -325,6 +326,7 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 
 	int cheeseBonus = 1000;
 	int distanceBonus = 192;
+	int depthBonus = 500;
 
 	int temp;
 
@@ -335,8 +337,9 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 
 	for (int i = 0; i < cheeses; i++)
 	{
-		if (mouseX == cheese_loc[i][0] && mouseY == cheese_loc[i][1])
+		if (mouseX == cheese_loc[i][0] && mouseY == cheese_loc[i][1]) {
 			nodeVal += cheeseBonus;
+		}
 		else
 		{
 			temp = (abs(mouseX - cheese_loc[i][0]) + abs(mouseY - cheese_loc[i][1]));
@@ -364,8 +367,10 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 		nodeVal -= 100;
 	}
 
+	nodeVal += depthBonus - 20 * depth;
+
 	if (debug)
-		fprintf(stderr, "\t\t\t@(%d, %d) Node val: %d\n", mouseX, mouseY, nodeVal);
+		fprintf(stderr, "\t\t@(%d, %d) Node val: %d\n", mouseX, mouseY, nodeVal);
 	return nodeVal;
 }
 
