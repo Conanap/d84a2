@@ -75,7 +75,7 @@ We believe it could be made to a point of near unbeatability, since the mouse wo
       of the mouse do better than your code? (yes, no, and
       a reasonable explanation of why)
 
-Yes. Our code at the moment is not optimal, and while it can pull off some amazing plays on certain seeds and certain spawn locations, at other times it makes poor decisions and ends up dying way earlier than it should have. As such, we believe a human can probably play better than our mouse given our current implementation.
+Yes. Our code at the moment is not optimal, and while it can pull off some amazing plays on certain seeds and certain spawn locations (seed 1000, parameters: 5 4 0 10 1), at other times it makes poor decisions and ends up dying way earlier than it should have. As such, we believe a human can probably play better than our mouse given our current implementation.
 
 _____________________________________________________
 
