@@ -231,7 +231,7 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 			memcpy(new_mouse_loc, mouse_loc, sizeof(int) * 1 * 2);
 			new_mouse_loc[0][0] += xW[i];
 			new_mouse_loc[0][1] += yW[i];
-			
+
 			nextNodeVal = MiniMax(gr, path, minmax_cost, cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility,
 								  agentId + 1, depth + 1, maxDepth, alpha, beta);
 			ret = max(ret, nextNodeVal);
@@ -252,8 +252,9 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		}
 	}
 
-	if(!agentId) {
-		if(minmax_cost[x][y] == 0.0)
+	if (!agentId)
+	{
+		if (minmax_cost[x][y] == 0.0)
 			minmax_cost[x][y] = ret;
 		else
 			minmax_cost[x][y] = min(ret, minmax_cost[x][y]);
@@ -301,18 +302,22 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 	return (ret);
 }
 
-int manDist(int x1, int y1, int x2, int y2) {
-	return (abs(x1 -x2) + abs(y1-y2));
+int manDist(int x1, int y1, int x2, int y2)
+{
+	return (abs(x1 - x2) + abs(y1 - y2));
 }
 
-int closestCheese(int mouse_loc[1][2], int cheese_loc[10][2], int cheeses) {
+int closestCheese(int mouse_loc[1][2], int cheese_loc[10][2], int cheeses)
+{
 	int closest = -1;
 	int dist = bigg;
 	int temp;
 
-	for(int i = 0; i < cheeses; i++) {
+	for (int i = 0; i < cheeses; i++)
+	{
 		temp = manDist(mouse_loc[0][0], mouse_loc[0][1], cheese_loc[i][0], cheese_loc[i][1]);
-		if(temp < dist) {
+		if (temp < dist)
+		{
 			closest = i;
 			dist = temp;
 		}
@@ -321,12 +326,145 @@ int closestCheese(int mouse_loc[1][2], int cheese_loc[10][2], int cheeses) {
 	return closest;
 }
 
-bool isOnCheese(int mouse_loc[1][2], int cheese_loc[10][2], int cheeses) {
-	for(int i = 0; i < cheeses; i++) {
-		if(mouse_loc[0][0] == cheese_loc[i][0] && mouse_loc[0][1] == cheese_loc[i][1])
+bool isOnCheese(int mouse_loc[1][2], int cheese_loc[10][2], int cheeses)
+{
+	for (int i = 0; i < cheeses; i++)
+	{
+		if (mouse_loc[0][0] == cheese_loc[i][0] && mouse_loc[0][1] == cheese_loc[i][1])
 			return true;
 	}
 	return false;
+}
+
+int countWalls(int x, int y, double gr[graph_size][4])
+{
+	int count = 0;
+	for (int i = 0; i < 4; i++)
+		count += !gr[x + size_X * y][i];
+	return count;
+}
+
+bool isOnMultCheese(int x, int cheese_loc[10][2], int cheeses)
+{
+	for (int i = 0; i < cheeses; i++)
+	{
+		if (x == cheese_loc[i][0] + size_X * cheese_loc[i][1])
+			return true;
+	}
+	return false;
+}
+
+void minHeapify(int heap[graph_size], int i, int size, int dist[graph_size], int heapIndex[graph_size])
+{
+	int l = 2 * i + 1;
+	int r = l + 1;
+	int min = i;
+	int temp;
+
+	if (l < size && heap[l] > heap[i])
+		min = l;
+	if (r < size && heap[r] > heap[i])
+		min = r;
+
+	if (min != i)
+	{
+		temp = heap[i];
+		heap[i] = heap[min];
+		heap[min] = heap[i];
+		heapIndex[heap[i]] = i;
+		heapIndex[heap[min]] = min;
+		minHeapify(heap, min, size, dist, heapIndex);
+	}
+}
+
+void bubbleUp(int heap[graph_size], int i, int dist[graph_size], int heapIndex[graph_size])
+{
+	int temp;
+	while (i > 0)
+	{
+		if (dist[heap[(i - 1) / 2]] > dist[heap[i]])
+		{
+			temp = heap[i];
+			heap[i] = heap[(i - 1) / 2];
+			heap[(i - 1) / 2] = heap[i];
+			heapIndex[heap[i]] = i;
+			heapIndex[heap[(i - 1) / 2]] = (i - 1) / 2;
+			i = (i - 1) / 2;
+		}
+	}
+}
+
+int ifOnShortest(int mouse_loc[1][2], int cheese_loc[10][2], int cheeses)
+{
+	int dist[size_X * size_Y] = {-1};
+	int prev[size_X * size_Y] = {-1};
+	int heap[size_X * size_Y];
+	int path[size_X * size_Y];
+	int heapIndex[size_X * size_Y];
+	int size = size_X * size_Y;
+	int x = mouse_loc[0][0];
+	int y = mouse_loc[0][1];
+	int next, tdist;
+
+	for (int i = 0; i < size_X * size_Y; i++)
+	{
+		heap[i] = i;
+		heapIndex[i] = i;
+	}
+	heap[0] = x + size_X * y;
+	heapIndex[0] = x + size_X * y;
+	heap[x + y * size_X] = 0;
+	heapIndex[x * y * size_X] = 0;
+
+	dist[x + y * size_X] = 0;
+
+	next = heap[0];
+	while (!isOnMultCheese(next, cheese_loc, cheeses))
+	{
+		next = heap[0];
+
+		// heapify
+		heap[0] = heap[size--];
+		heapIndex[heap[0]] = 0;
+		minHeapify(heap, 0, size, dist, heapIndex);
+
+		// explore surroundings
+		tdist = 1 + dist[next];
+
+		if (tdist < dist[next + 1])
+		{
+			dist[next + 1] = tdist;
+			prev[next + 1] = next;
+			bubbleUp(heap, heapIndex[next + 1], dist, heapIndex);
+		}
+		if (tdist < dist[next + size_X])
+		{
+			dist[next + size_X] = tdist;
+			prev[next + size_X] = next;
+			bubbleUp(heap, heapIndex[next + size_X], dist, heapIndex);
+		}
+		if (next - 1 > 0 && tdist < dist[next - 1])
+		{
+			dist[next - 1] = tdist;
+			prev[next - 1] = next;
+			bubbleUp(heap, heapIndex[next - 1], dist, heapIndex);
+		}
+		if (next - size_X > 0 && tdist < dist[next - size_X])
+		{
+			dist[next - size_X] = tdist;
+			prev[next - size_X] = next;
+			bubbleUp(heap, heapIndex[next - size_X], dist, heapIndex);
+		}
+	}
+
+	size = size_X * size_Y - size;
+	while (prev[next] != x + y * size_X)
+	{
+		path[size--] = prev[next];
+		next = prev[next];
+	}
+
+	return path[1];
 }
 
 double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, int depth, double gr[graph_size][4])
@@ -365,40 +503,57 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 
 	int nodeVal = 0;
 
-	walls = 0;
-	for (int i = 0; i < 4; i++)
-	{
-		if (!gr[mouseX + mouseY * size_X][i])
-			walls++;
-	}
+	walls = countWalls(mouseX, mouseY, gr);
 
 	int closestCat = closestCheese(mouse_loc, cat_loc, cats);
-	if(manDist(mouse_loc[0][0], mouse_loc[0][1], cat_loc[closestCat][0], cat_loc[closestCat][1]) > 10) {
-		if(walls == 3)
+	if (manDist(mouse_loc[0][0], mouse_loc[0][1], cat_loc[closestCat][0], cat_loc[closestCat][1]) > 10)
+	{
+		if (walls == 3)
 			return -800;
 
-		if(isOnCheese(mouse_loc, cheese_loc, cheeses)) {
+		if (isOnCheese(mouse_loc, cheese_loc, cheeses))
+		{
 			return 1000 - depth;
 		}
 
 		int cCheese = closestCheese(mouse_loc, cheese_loc, cheeses);
-		return manDist(mouse_loc[0][0], mouse_loc[0][1], cheese_loc[cCheese][0], cheese_loc[cCheese][1]) - depth;
-		
+		nodeVal = 1000 - 5 * manDist(mouseX, mouseY, cheese_loc[cCheese][0], cheese_loc[cCheese][1]) - depth;
+
+		if (countWalls(mouseX + 1, mouseY, gr) == 3 && walls == 2)
+		{
+			nodeVal -= 200;
+		}
+		if (countWalls(mouseX - 1, mouseY, gr) == 3 && walls == 2)
+		{
+			nodeVal -= 200;
+		}
+		if (countWalls(mouseX, mouseY + 1, gr) == 3 && walls == 2)
+		{
+			nodeVal -= 200;
+		}
+		if (countWalls(mouseX, mouseY - 1, gr) == 3 && walls == 2)
+		{
+			nodeVal -= 200;
+		}
+
+		return nodeVal;
 	}
 
 	for (int i = 0; i < cheeses; i++)
 	{
-		if (mouseX == cheese_loc[i][0] && mouseY == cheese_loc[i][1]) {
+		if (mouseX == cheese_loc[i][0] && mouseY == cheese_loc[i][1])
+		{
 			nodeVal += cheeseBonus;
 		}
 		else
 		{
-			temp = manDist(mouseX, mouseY,cheese_loc[i][0], cheese_loc[i][1]);
+			temp = manDist(mouseX, mouseY, cheese_loc[i][0], cheese_loc[i][1]);
 			nodeVal += distanceBonus - (3 * temp);
 		}
 	}
 
-	if(walls == 3) {
+	if (walls == 3)
+	{
 		nodeVal -= 800;
 	}
 
@@ -409,9 +564,10 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 
 	nodeVal += depthBonus - 20 * depth;
 
-  if(manDist(mouse_loc[0][0], mouse_loc[0][1], cat_loc[closestCat][0], cat_loc[closestCat][1]) <= 5) {
-    nodeVal -= 2000;
-  }
+	if (manDist(mouseX, mouseY, cat_loc[closestCat][0], cat_loc[closestCat][1]) <= 3)
+	{
+		nodeVal -= 2000;
+	}
 
 	if (debug)
 		fprintf(stderr, "\t\t@(%d, %d) Node val: %d\n", mouseX, mouseY, nodeVal);
