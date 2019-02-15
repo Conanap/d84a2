@@ -409,6 +409,10 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 
 	nodeVal += depthBonus - 20 * depth;
 
+  if(manDist(mouse_loc[0][0], mouse_loc[0][1], cat_loc[closestCat][0], cat_loc[closestCat][1]) <= 5) {
+    nodeVal -= 2000;
+  }
+
 	if (debug)
 		fprintf(stderr, "\t\t@(%d, %d) Node val: %d\n", mouseX, mouseY, nodeVal);
 	return nodeVal;
