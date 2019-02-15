@@ -58,6 +58,7 @@ void fwInit(double gr[graph_size][4])
 	// init connected
 	for (int i = 0; i < graph_size; i++)
 	{
+		dists[i][i] = 0;
 		if (i - 1 >= 0 && isConnected(i, 3, gr))
 		{ // L
 			dists[i][i - 1] = 1;
@@ -438,9 +439,9 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 	int shortest = bigg;
 	for (int i = 0; i < cheeses; i++)
 	{
-		if (gr[index][cheese_loc[i][0] + cheese_loc[i][1] * size_Y] < shortest)
+		if (dists[index][cheese_loc[i][0] + cheese_loc[i][1] * size_X] < shortest)
 		{
-			shortest = gr[index][cheese_loc[i][0] + cheese_loc[i][1] * size_Y];
+			shortest = dists[index][cheese_loc[i][0] + cheese_loc[i][1] * size_X];
 		}
 	}
 
