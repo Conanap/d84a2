@@ -233,27 +233,22 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 	{
 		fwInit(gr);
 		initd = true;
-		// for (int x = 0; x < graph_size; x++)
-		// {
-		// 	for (int y = 0; y < graph_size; y++)
-		// 	{
-		// 		fprintf(stderr, "%d, ", dists[x][y]);
-		// 	}
-		// 	fprintf(stderr, "\n");
-		// }
 	}
 
-	path[0][0] = mouse_loc[0][0];
-	path[0][1] = mouse_loc[0][1];
-
-	int nextNodeVal;
+	double nextNodeVal;
 
 	// max depth reached / is a terminal node
 	if (depth == maxDepth || checkForTerminal(mouse_loc, cat_loc, cheese_loc, cats, cheeses))
 	{
 		// return utility of this node
-		nextNodeVal = utility(cat_loc, cheese_loc, mouse_loc, cats, cheeses, depth + 1, gr);
-		minmax_cost[mouse_loc[0][0]][mouse_loc[0][1]] = nextNodeVal;
+		nextNodeVal = utility(cat_loc, cheese_loc, mouse_loc, cats, cheeses, depth, gr);
+		if (agentId)
+			minmax_cost[mouse_loc[0][0]][mouse_loc[0][1]] = max(nextNodeVal, minmax_cost[mouse_loc[0][0]][mouse_loc[0][1]]);
+		else
+		{
+			minmax_cost[mouse_loc[0][0]][mouse_loc[0][1]] = min(nextNodeVal, minmax_cost[mouse_loc[0][0]][mouse_loc[0][1]]);
+		}
+
 		return nextNodeVal;
 	}
 
@@ -267,16 +262,12 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		ret = -bigg;
 		x = mouse_loc[0][0];
 		y = mouse_loc[0][1];
-		if (debug)
-			fprintf(stderr, "\tMouse depth %d\n", depth);
 	}
 	else
 	{
 		ret = bigg;
 		x = cat_loc[agentId - 1][0];
 		y = cat_loc[agentId - 1][1];
-		if (debug)
-			fprintf(stderr, "\tCat depth %d\n", depth);
 	}
 
 	xW[0] = 0;						  // top
@@ -288,14 +279,16 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 	yW[1] = 0;						  // right
 	yW[2] = gr[x + (size_X * y)][2];  // bottom
 	yW[3] = 0;						  // left
-	for (int i = 0; i < 4 && (!mode || alpha >= beta); i++)
+	for (int i = 0; i < 4 && (!mode || alpha < beta); i++)
 	{
 		// if mouse turn; id = 0
 		if (!agentId && xW[i] != yW[i])
 		{
 			int new_mouse_loc[1][2];
 			// let node = the node to explore
-			memcpy(new_mouse_loc, mouse_loc, sizeof(int) * 1 * 2);
+			new_mouse_loc[0][0] = mouse_loc[0][0];
+			new_mouse_loc[0][1] = mouse_loc[0][1];
+			// memcpy(new_mouse_loc, mouse_loc, sizeof(int) * 1 * 2);
 			new_mouse_loc[0][0] += xW[i];
 			new_mouse_loc[0][1] += yW[i];
 
@@ -308,10 +301,16 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		{ // cat, id > 0
 			int new_cat_loc[10][2];
 			// let node = the node to explore
-			memcpy(new_cat_loc, cat_loc, sizeof(int) * 10 * 2);
+			// memcpy(new_cat_loc, cat_loc, sizeof(int) * 10 * 2);
+			for (int cat = 0; cat < cats; cat++)
+			{
+				new_cat_loc[cat][0] = cat_loc[cat][0];
+				new_cat_loc[cat][1] = cat_loc[cat][1];
+			}
 			new_cat_loc[agentId - 1][0] += xW[i];
 			new_cat_loc[agentId - 1][1] += yW[i];
 
+			// fprintf(stderr, "cats:")
 			nextNodeVal = MiniMax(gr, path, minmax_cost, new_cat_loc, cats, cheese_loc, cheeses, mouse_loc, mode, utility,
 								  agentId == cats ? 0 : agentId + 1, depth + 1, maxDepth, alpha, beta);
 			ret = min(ret, nextNodeVal);
@@ -363,7 +362,7 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 		prev[0] = mouse_loc[0][0];
 		prev[1] = mouse_loc[0][1];
 
-		if (debug)
+		if (true)
 			fprintf(stderr, "Final selected Path for this run: @(%d, %d) w/ %f cost\n", path[0][0], path[0][1], minmax_cost[path[0][0]][path[0][1]]);
 	}
 	return (ret);
@@ -450,10 +449,16 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 
 	for (int i = 0; i < cats; i++)
 	{
-		if (x == cat_loc[i][0] && y == cat_loc[i][1])
+		// if (dists[index][cat_loc[i][0] + cat_loc[i][1] * size_X] < 3)
+		if (manDist(x, y, cat_loc[i][0], cat_loc[i][1]) < 4)
 		{
-			return -1000 - depth;
+			return (double)(-4000 - depth);
 		}
+	}
+
+	if (countWalls(x, y, gr) == 3 && !isOnCheese(mouse_loc, cheese_loc, cheeses))
+	{
+		return (double)(-600 - depth);
 	}
 
 	int shortest = bigg;
@@ -465,7 +470,7 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 		}
 	}
 
-	return 200 - shortest - depth;
+	return (double)(300 - shortest - depth);
 }
 
 int checkForTerminal(int mouse_loc[1][2], int cat_loc[10][2], int cheese_loc[10][2], int cats, int cheeses)
@@ -476,8 +481,8 @@ int checkForTerminal(int mouse_loc[1][2], int cat_loc[10][2], int cheese_loc[10]
      - A cat eats the mouse
      or
      - The mouse eats a cheese
-   
-   If the node is a terminal, the function returns 1, else it returns 0
+   debug
+   debugns 1, else it returns 0
  */
 
 	// Check for cats having lunch

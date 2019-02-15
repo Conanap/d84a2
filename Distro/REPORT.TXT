@@ -10,7 +10,7 @@ mark.
 
 ________________________________________________
 
-Student Name 1 (last, first): Fung, Albion
+Student Name 1 (last, first): Fung, Albion Ka Hei
 
 Student Name 2 (last, first): Law, Chi Fai
 
@@ -44,8 +44,7 @@ but explain carefully when needed.
      a single, meaningful value. Convince us that your utility
      makes sense!
 	
-Basically, if cat, pls dont go there. (BIG Malus) Otherwise, get closest cheese and, after modifiers, return.
-The value basically stands for how efficient it is to follow a certain route, as well as how safe it is to continue down that road.
+If cat near that spot, run away. Otherwise, follow shortest path that looks safe. It also attempts to avoid dead ends as it will likely be the end of it, but of course if there's cheese, it will go there.
 
 
 2 .- (2 marks) Ignoring computation time, what is the effect of
@@ -58,7 +57,7 @@ The more search depth, the higher chance the mouse wins the game, since it is ab
      can these be fixed either with the utility function, or
      by changing the search depth? if so, how?
 	
-Right now, if our mouse makes a poor cheese choice (e.g. a cheese in a corner while other cheeses exist), our mouse loses. We believe this could be fixed by simply putting heavier weight on a non corner cheese (either with utility or search depth, but we prefer search depth), since our code is already attempting to detect and avoid dead ends intentionally, a similar implementation shouldn't be too hard.
+Right now, if our mouse makes a poor cheese choice (e.g. a cheese in a corner while other cheeses exist), our mouse loses. We believe this could be fixed by simply putting heavier weight on a non corner cheese (either with utility or search depth, but we prefer search depth), since our code is already attempting to detect and avoid dead ends intentionally, a similar implementation shouldn't be too hard. Unfortunately, we also have a bug where the mouse seems to think the space behind the cat is safe - pretty much anytime the cat gets in range of the mouse. If the cats keep out of the distance though (nearly impossible due to needing cheese), the mouse will avoid the cats well.
 
 4 .- (2 marks) Compare cats with smartness=.8 against cats with
      smartness=1 - which are harder for your mouse to beat?
