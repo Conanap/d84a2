@@ -179,18 +179,21 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
 	path[0][0] = mouse_loc[0][0];
 	path[0][1] = mouse_loc[0][1];
 
+	int nextNodeVal;
+
 	// max depth reached / is a terminal node
 	if (depth == maxDepth || checkForTerminal(mouse_loc, cat_loc, cheese_loc, cats, cheeses))
 	{
 		// return utility of this node
-		return utility(cat_loc, cheese_loc, mouse_loc, cats, cheeses, depth + 1, gr);
+		nextNodeVal = utility(cat_loc, cheese_loc, mouse_loc, cats, cheeses, depth + 1, gr);
+		minmax_cost[mouse_loc[0][0]][mouse_loc[0][1]] = nextNodeVal;
+		return nextNodeVal;
 	}
 
 	double ret;
 
 	int xW[4], yW[4];
 	int x, y;
-	int nextNodeVal;
 
 	if (!agentId)
 	{
